@@ -32,37 +32,15 @@
  *
  */
 
-namespace Skyline\Component\Config;
+use Skyline\Component\Plugin\OpenDirectoryPlugin;
+use Skyline\Kernel\Config\PluginConfig;
 
+return [
+    "dc-deliver-open-directory" => [
+        PluginConfig::PLUGIN_EVENT_NAME => SKY_EVENT_DC_DELIVER,
+        PluginConfig::PLUGIN_CLASS => OpenDirectoryPlugin::class,
 
-use Skyline\Compiler\CompilerContext;
-use TASoft\Config\Config;
-
-class OpenDirectoryComponent extends AbstractComponent
-{
-    protected function getComponentElementClassName(): string
-    {
-        return "";
-    }
-
-    protected function makeConfiguration(Config $configuration): Config
-    {
-        return new Config();
-    }
-
-    /**
-     * OpenDirectoryComponent constructor.
-     * @param string $publicURIPrefix   A uri prefix without /Public or custom configured prefix.
-     * @param string $localDirectory    The local directory
-     */
-    public function __construct($publicURIPrefix, $localDirectory)
-    {
-        $cfg = $this->getConfig();
-        $cfg["uri"] = $publicURIPrefix;
-        if($ctx = CompilerContext::getCurrentCompiler()) {
-            $cfg["dir"] = $ctx->getRelativeProjectPath( realpath($localDirectory) );
-        } else {
-            $cfg["dir"] = $localDirectory;
-        }
-    }
-}
+        PluginConfig::PLUGIN_METHOD => 'openDirectory',
+        PluginConfig::PLUGIN_PRIORITY => 40         // between access control and delivery
+    ]
+];

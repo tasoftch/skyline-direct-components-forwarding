@@ -32,37 +32,30 @@
  *
  */
 
-namespace Skyline\Component\Config;
+namespace Skyline\Component\Plugin;
 
 
-use Skyline\Compiler\CompilerContext;
-use TASoft\Config\Config;
+use Skyline\Component\Event\DeliverEvent;
 
-class OpenDirectoryComponent extends AbstractComponent
+class OpenDirectoryPlugin
 {
-    protected function getComponentElementClassName(): string
+    public function openDirectory(string $eventName, DeliverEvent $event, $eventManager, ...$arguments)
     {
-        return "";
-    }
+        $path = SkyGetPath("$(C)/components.config.php");
+        if($path) {
+            $cmps = require $path;
 
-    protected function makeConfiguration(Config $configuration): Config
-    {
-        return new Config();
-    }
+            $required = $event->getRequestedFile();
 
-    /**
-     * OpenDirectoryComponent constructor.
-     * @param string $publicURIPrefix   A uri prefix without /Public or custom configured prefix.
-     * @param string $localDirectory    The local directory
-     */
-    public function __construct($publicURIPrefix, $localDirectory)
-    {
-        $cfg = $this->getConfig();
-        $cfg["uri"] = $publicURIPrefix;
-        if($ctx = CompilerContext::getCurrentCompiler()) {
-            $cfg["dir"] = $ctx->getRelativeProjectPath( realpath($localDirectory) );
-        } else {
-            $cfg["dir"] = $localDirectory;
+            foreach(($cmps["##"] ?? []) as $prefix => $directory) {
+                if(stripos($required, $prefix) === 0) {
+                    $path = $directory . DIRECTORY_SEPARATOR . substr( $required, strlen($prefix) );
+                    if($path = realpath($path)) {
+                        $event->setAttribute('absolute_path', $path);
+                    }
+                    break;
+                }
+            }
         }
     }
 }
