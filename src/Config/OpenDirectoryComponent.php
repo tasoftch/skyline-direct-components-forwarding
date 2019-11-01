@@ -59,10 +59,15 @@ class OpenDirectoryComponent extends AbstractComponent
     {
         $cfg = $this->getConfig();
         $cfg["uri"] = $publicURIPrefix;
-        if($ctx = CompilerContext::getCurrentCompiler()) {
-            $cfg["dir"] = $ctx->getRelativeProjectPath( realpath($localDirectory) );
+
+        if($ld = realpath($localDirectory)) {
+            if($ctx = CompilerContext::getCurrentCompiler()) {
+                $cfg["dir"] = $ctx->getRelativeProjectPath( $ld );
+            } else {
+                $cfg["dir"] = $ld;
+            }
         } else {
-            $cfg["dir"] = $localDirectory;
+            throw new \RuntimeException("Open directory not found $localDirectory");
         }
     }
 }
