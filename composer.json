@@ -1,7 +1,6 @@
 {
   "name": "skyline/direct-components-forwarding",
   "license": "BSD-3-Clause",
-  "minimum-stability": "dev",
   "authors": [
     {
       "name": "Thomas Abplanalp",
@@ -15,9 +14,9 @@
   },
   "require" : {
     "php": "^7.2",
-    "skyline/direct-components": "dev-master"
+    "skyline/direct-components": "^0.8"
   },
   "require-dev": {
-    "skyline/compiler": "dev-master"
+    "skyline/compiler": "^0.8"
   }
 }
